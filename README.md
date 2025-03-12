@@ -10,7 +10,7 @@ You can deploy the app by doing the following:
 
 git clone git@github.com:a8anassis/schoolapp7-swing-soa-stage.git
 
-cd swing-app7-soa-dev
+cd schoolapp7-swing-soa-stage
 
 get a snap of the db schema and data
 
