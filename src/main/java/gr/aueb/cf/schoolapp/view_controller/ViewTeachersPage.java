@@ -142,7 +142,9 @@ public class ViewTeachersPage extends JFrame {
                     if (selectedRow != -1) {
                         // Get data from the selected row
 						selectedId = (Integer) model.getValueAt(selectedRow, 0); // ID column
-                    }
+                    } else {
+						// todo
+					}
                 }
             }
         });
@@ -253,7 +255,7 @@ public class ViewTeachersPage extends JFrame {
 					 .map(t -> new Object[] {t.getId(), t.getFirstname(), t.getLastname()})
 					 .forEach(row -> model.addRow(row));
 		} catch (TeacherDAOException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			JOptionPane.showMessageDialog(null, "Error in building the table", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}

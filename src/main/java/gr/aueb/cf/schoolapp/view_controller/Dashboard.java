@@ -93,6 +93,11 @@ public class Dashboard extends JFrame {
 			public void mouseExited(MouseEvent e) {
 				lbl_teachersView.setText("Προβολή Εκπαιδευτών");
 			}
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				Main.getDashboard().setEnabled(true);
+				Main.getViewTeachersPage().setVisible(true);
+			}
 		});
 		lbl_teachersView.setForeground(Color.WHITE);
 		lbl_teachersView.setFont(new Font("Tahoma", Font.PLAIN, 12));

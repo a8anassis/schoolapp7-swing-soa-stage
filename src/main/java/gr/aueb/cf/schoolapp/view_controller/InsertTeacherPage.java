@@ -60,6 +60,7 @@ public class InsertTeacherPage extends JFrame {
                 try {
                     //cities = cityService.getAllCities();
 					cityService.getAllCities().forEach(cityComboBox::addItem);
+					//resetInputForm();
                 } catch (SQLException ex) {
                     JOptionPane.showMessageDialog(null, "Get cities fatal error.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
@@ -253,7 +254,9 @@ public class InsertTeacherPage extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				TeacherReadOnlyDTO teacherReadOnlyDTO;
 				TeacherInsertDTO insertDTO = doDataBinding(); // Data binding
-				Map<String , String > errors = TeacherValidator.validate(insertDTO); 	// Validation
+
+				// Validation
+				Map<String , String> errors = TeacherValidator.validate(insertDTO); 	// Validation
 				if (!errors.isEmpty()) {
 					errorFirstname.setText(errors.getOrDefault("firstname", ""));
 					errorLastname.setText(errors.getOrDefault("lastname", ""));

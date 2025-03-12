@@ -260,8 +260,10 @@ public class TeacherView extends JFrame {
 				}
 				zipcodeText.setText(dto.getZipCode());
 		} catch (TeacherDAOException | TeacherNotFoundException e) {
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(null,  "Select error in fetch teacher", "Error", JOptionPane.ERROR_MESSAGE);	
+			//e.printStackTrace();
+			//JOptionPane.showMessageDialog(null,  "Select error in fetch teacher", "Error", JOptionPane.ERROR_MESSAGE);
+			Main.getViewTeachersPage().setEnabled(true);
+			Main.getTeacherView().setVisible(false);
 		}
 	}
 }

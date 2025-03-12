@@ -63,7 +63,11 @@ public class UpdateTeacherPage extends JFrame {
 					// ex.printStackTrace();
 					JOptionPane.showMessageDialog(null, "Get cities fatal error.", "Error", JOptionPane.ERROR_MESSAGE);
 				}
+
 				fetchTeacherFromDatabase(Main.getViewTeachersPage().getSelectedId());
+				//Integer id = Main.getViewTeachersPage().getSelectedId(); // todo
+				// System.out.println(id);
+				//if (id != null) fetchTeacherFromDatabase(id);
 
 				errorFirstname.setText("");
 				errorLastname.setText("");
@@ -289,7 +293,6 @@ public class UpdateTeacherPage extends JFrame {
 					Main.getUpdateSuccessPage().setUuidText(teacherReadOnlyDTO.getUuid());
 					Main.getUpdateTeacherPage().setEnabled(false);
 					Main.getUpdateSuccessPage().setVisible(true);
-
 				} catch (TeacherDAOException ex) {
 					JOptionPane.showMessageDialog(null, "DB Error", "Error", JOptionPane.ERROR_MESSAGE);
 				} catch (TeacherAlreadyExistsException ex) {
@@ -350,8 +353,10 @@ public class UpdateTeacherPage extends JFrame {
 			errorLastname.setText("");
 
 		} catch (TeacherDAOException | TeacherNotFoundException e) {
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(null, "Select error in fetch teacher", "Error", JOptionPane.ERROR_MESSAGE);
+			//e.printStackTrace();
+			//JOptionPane.showMessageDialog(null, "Select error in fetch teacher", "Error", JOptionPane.ERROR_MESSAGE);
+			Main.getViewTeachersPage().setEnabled(true);
+			Main.getUpdateTeacherPage().setVisible(false);
 		}
 	}
 }
