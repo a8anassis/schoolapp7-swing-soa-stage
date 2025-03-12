@@ -8,7 +8,7 @@ What has been implemented is the Teachers mgmt.
 
 You can deploy the app by doing the following:
 
-git clone git@github.com:a8anassis/swing-app7-soa-dev.git
+git clone git@github.com:a8anassis/schoolapp7-swing-soa-stage.git
 
 cd swing-app7-soa-dev
 
