@@ -1,22 +1,33 @@
-package gr.aueb.cf.schoolapp.dao;
+package gr.aueb.cf.schoolapp.service;
 
+import gr.aueb.cf.schoolapp.dao.ITeacherDAO;
+import gr.aueb.cf.schoolapp.dao.TeacherDAOImpl;
 import gr.aueb.cf.schoolapp.dao.exceptions.TeacherDAOException;
 import gr.aueb.cf.schoolapp.dao.util.DBHelper;
+import gr.aueb.cf.schoolapp.dto.TeacherInsertDTO;
+import gr.aueb.cf.schoolapp.dto.TeacherReadOnlyDTO;
+import gr.aueb.cf.schoolapp.dto.TeacherUpdateDTO;
+import gr.aueb.cf.schoolapp.exceptions.TeacherAlreadyExistsException;
+import gr.aueb.cf.schoolapp.exceptions.TeacherNotFoundException;
 import gr.aueb.cf.schoolapp.model.Teacher;
 import org.junit.jupiter.api.*;
+
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
-class TeacherDAOTest {
+class TeacherServiceTest {
 
     private static ITeacherDAO teacherDAO;
+    private static ITeacherService teacherService;
 
     @BeforeAll
     public static void setupClass() throws SQLException {
         teacherDAO = new TeacherDAOImpl();
+        teacherService = new TeacherServiceImpl(teacherDAO);
         DBHelper.eraseData();
     }
 
@@ -36,62 +47,71 @@ class TeacherDAOTest {
     }
 
     @Test
-    public void pesristAndGetTeacher() throws TeacherDAOException {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/M/yyyy HH:mm");
+    public void insertTeacher() throws TeacherDAOException, TeacherAlreadyExistsException {
+        TeacherInsertDTO insertDTO = new TeacherInsertDTO("Αθανάσιος", "Ιωάννου", "080654320", "Ανδρέας",
+                "6935565765", "a8ana@gmail.com", "Πατησίων", "76", "10434", 7);
 
-        Teacher teacher = new Teacher(null, "Λαμπρινή", "Παπαδοπούλου", "1078563411", "Νίκος", "2222309876",
-                "lamp@aueb.gr", "Αδριανής", "99", "11122", 6,
-                "9b0e785c-52a8-46b6-a661-ea7689f6c6a8",
-                LocalDateTime.parse("2/3/2025 23:15", formatter),
-                LocalDateTime.parse("2/3/2025 23:15", formatter));
+        teacherService.insertTeacher(insertDTO);
 
-        teacherDAO.insert(teacher);
-        List<Teacher> teachers = teacherDAO.getByLastname("Παπαδοπούλου");
+        List<TeacherReadOnlyDTO> teachers = teacherService.getTeachersByLastname("Ιωάννου");
         assertEquals(1, teachers.size());
     }
 
     @Test
-    void updateTeacher() throws TeacherDAOException {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/M/yyyy HH:mm");
+    public void updateTeacher()
+            throws TeacherDAOException, TeacherNotFoundException, TeacherAlreadyExistsException {
 
-        Teacher teacher = new Teacher(2, "Άννα", "Γιαννούτσου", "144445678", "Κώστας", "110345678",
-                "anna@gmail.com", "Γεωργούτσου", "12", "67856", 5,
-                "2467ffcf-9c4f-43bc-b43f-f8d097825566",
-                LocalDateTime.parse("26/2/2025 15:01", formatter),
-                LocalDateTime.parse("2/3/2025 22:54", formatter));
+        TeacherUpdateDTO updateDTO = new TeacherUpdateDTO(9, "Αθανάσιος", "Ιωάννου", "080654320", "Ανδρέας",
+                "6935565765", "a8ana@gmail.com", "Πατησίων", "76", "10434", 7);
 
-        teacherDAO.update(teacher);
+        teacherService.updateTeacher(9, updateDTO);
 
-        Teacher teacherUpdated = teacherDAO.getById(2);
-        assertEquals("Κώστας", teacherUpdated.getFatherName());
-        assertEquals("144445678", teacherUpdated.getVat());
-        assertEquals("110345678", teacherUpdated.getPhoneNum());
+        TeacherReadOnlyDTO teacher = teacherService.getTeacherById(9);
+        assertEquals("080654320", teacher.getVat());
+        assertEquals("Αθανάσιος", teacher.getFirstname());
+        assertEquals("Ιωάννου", teacher.getLastname());
     }
 
     @Test
-    void deleteTeacher() throws TeacherDAOException {
-        teacherDAO.delete(1);
+    public void deleteTeacherPositive()
+            throws TeacherDAOException, TeacherNotFoundException {
 
-        Teacher teacher = teacherDAO.getById(1);
-        assertNull(teacher);
+        teacherService.deleteTeacher(1);
+        assertThrows(TeacherNotFoundException.class, () -> {
+            teacherService.getTeacherById(1);
+        });
     }
 
     @Test
-    void getTeacherByIdPositive() throws TeacherDAOException {
-        Teacher teacher = teacherDAO.getById(1);
+    public void deleteTeacherNegative() {
+        assertThrows(TeacherNotFoundException.class, () -> {
+            teacherService.deleteTeacher(15);
+        });
+    }
+
+    @Test
+    void getTeacherByIdPositive() throws TeacherDAOException, TeacherNotFoundException {
+        TeacherReadOnlyDTO teacher = teacherService.getTeacherById(1);
         assertEquals("Ανδρούτσος", teacher.getLastname());
     }
 
     @Test
-    void getTeacherByIdNegative() throws TeacherDAOException {
-        Teacher teacher = teacherDAO.getById(15);
-        assertNull(teacher);
+    void getTeacherByIdNegative()  {
+        assertThrows(TeacherNotFoundException.class, () -> {
+            teacherService.getTeacherById(15);
+        });
     }
 
     @Test
     void getTeacherByLastname() throws TeacherDAOException {
-        List<Teacher> teachers = teacherDAO.getByLastname("Ανδρού");
+        List<TeacherReadOnlyDTO> teachers = teacherService.getTeachersByLastname("Ανδρούτσος");
         assertEquals(2, teachers.size());
+    }
+
+    @Test
+    void getTeacherByLastnameNegative() throws TeacherDAOException {
+        List<TeacherReadOnlyDTO> teachers = teacherService.getTeachersByLastname("Miller");
+        assertEquals(0, teachers.size());
     }
 
     public static void createDummyData() throws TeacherDAOException {
@@ -161,5 +181,5 @@ class TeacherDAOTest {
         teacherDAO.insert(teacher8);
         teacherDAO.insert(teacher9);
     }
-  
+
 }
