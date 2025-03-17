@@ -30,10 +30,10 @@ public class DBHelper {
             ps1.executeUpdate();
             rs = ps2.executeQuery();
             List<String> tables = mapRsToList(rs);
-            for (String table : tables) {
-                if (!table.equals("cities")) {
-                    connection.prepareStatement("DELETE FROM " + table).executeUpdate();
-                    connection.prepareStatement("ALTER TABLE " + table + " AUTO_INCREMENT=1").executeUpdate();
+            for (String nameTable : tables) {
+                if (!nameTable.equals("cities")) {
+                    connection.prepareStatement("DELETE FROM " + nameTable).executeUpdate();
+                    connection.prepareStatement("ALTER TABLE " + nameTable + " AUTO_INCREMENT=1").executeUpdate();
                 }
             }
             connection.prepareStatement(sqlFKOn).executeUpdate();
